@@ -14,6 +14,51 @@
     5) Повторите вызов метода и покажите, что сейчас по телеку. */
 
 
+enum Channels: String {
+    case one = "Первый"
+    case two = "Россия 1"
+    case three = "Матч ТВ"
+    case four = "НТВ"
+    case five = "Пятый"
+    case six = "Disney"
+}
+
+class TV {
+    let brand: String
+    private(set) var switcher: Bool
+    private(set) var currentChannel: Channels
+    
+    init(brand: String, switcher: Bool, currentChannel: Channels) {
+        self.brand = brand
+        self.switcher = switcher
+        self.currentChannel = currentChannel
+    }
+    
+    // Включение/Выключение телевизора.
+    func changeSwitch() {
+        self.switcher = self.switcher ? false : true
+    }
+    
+    // Изменение канала.
+    func changeCurrentChannel(to newChannel: Channels) {
+        guard self.switcher else { print("ТВ выключен"); return }
+        self.currentChannel = newChannel
+        print("Переключение на канал: \(self.currentChannel.rawValue).")
+    }
+    
+    // Показать, какой канал сейчас играет
+    func showCurrentChannel() {
+        guard self.switcher else { print("ТВ выключен"); return }
+        print("В данный момент играет канал: \(self.currentChannel.rawValue).")
+    }
+}
+
+var tvLG = TV(brand: "LG T-800", switcher: false, currentChannel: .one)
+tvLG.changeSwitch()
+tvLG.showCurrentChannel()
+tvLG.changeCurrentChannel(to: .six)
+
+
 
 
 
