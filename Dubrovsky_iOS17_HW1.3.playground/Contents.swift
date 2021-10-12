@@ -91,6 +91,11 @@ class MessagesSession: MessageSessionProtocol {
     Статический анализатор Swift подскажет вам, если overload не получится ;) */
 
 
+class Messages {
+    func sendMessage(input: String) {}
+    func sendMessage(input: Double) {}
+    func sendMessage(input: Int) {}
+}
 
 
 
