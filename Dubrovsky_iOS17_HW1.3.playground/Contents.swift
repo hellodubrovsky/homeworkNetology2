@@ -14,7 +14,58 @@
 
     2) Допуск:
         В качестве примеров не используйте телевизор и пульт, так как это будет входить в следующие домашние задания.
-        Постарайтесь описать, почему вы определили тот или иной уровень доступа. */
+        Постарайтесь описать, почему вы определили тот или иной уровень доступа.
+ 
+    
+ 
+    MARK: РЕШЕНИЕ:
+    Класс: Сессии приложения по отправке сообщений.
+    Геттер: Статус подключения.
+    Геттер: Сообщения от собеседника.
+    Сеттер: Никнейм пользователя.
+    Публичный метод: Авторизация в приложения.
+    Приватный метод: Загрузка сообщений собеседника.
+ 
+    P.S. Пример является абстрактным, но кмк выполняет условия данного задания. */
+
+
+protocol MessageSessionProtocol {
+    var statusConnection: Bool { get }                                        // [Геттер] Статус подключения - свойство которое можно только получить.
+    var interlocutorsMessages: [Int: String]? { get }                         // [Геттер] Сообщения от собеседника - можно только получить.
+    var nameUser: String { get set }                                          // [Сеттер] Имя юзера - можно получить, а также изменить.
+}
+
+class MessagesSession: MessageSessionProtocol {
+    var statusConnection: Bool = false
+    var interlocutorsMessages: [Int: String]? = nil
+    var nameUser: String
+    
+    private(set) var userLogin: String                                        // Приватное св-во логин, которое можно только посмотреть из вне.
+    private var userPassword: String                                          // Приватное св-во пароль, которое нельзя изменить из вне.
+    
+    init(nUser: String, userLogin: String, userPassword: String) {
+        self.nameUser = nUser
+        self.userLogin = userLogin
+        self.userPassword = userPassword
+    }
+    
+    // MARK: Public's methods
+    func connection(login: String, password: String) -> Bool {                // Публичный метод - Авторизация в приложения.
+        if login == self.userLogin && password == self.userPassword {
+            self.statusConnection = true
+            uploadingMessages()
+            return true
+        } else {
+            self.statusConnection = false
+            return false
+        }
+    }
+    
+    // MARK: Private method
+    private func uploadingMessages() -> [Int: String] {                       // Приватный метод - Загрузка сообщений собеседника.
+        return [1: "Привет", 2: "Как дела?"]
+    }
+}
 
 
 
