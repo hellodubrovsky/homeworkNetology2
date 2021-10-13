@@ -43,20 +43,20 @@ class TV {
     func changeCurrentChannel(to newChannel: Channels) {
         guard self.switcher else { print("ТВ выключен"); return }
         self.currentChannel = newChannel
-        print("Переключение на канал: \(self.currentChannel.rawValue).")
+        print("Переключение на канал: '\(self.currentChannel.rawValue)'.")
     }
     
     // Показать, какой канал сейчас играет
     func showCurrentChannel() {
         guard self.switcher else { print("ТВ выключен"); return }
-        print("В данный момент играет канал: \(self.currentChannel.rawValue).")
+        print("В данный момент играет канал: '\(self.currentChannel.rawValue)'.")
     }
 }
 
-var tvLG = TV(brand: "LG T-800", switcher: false, currentChannel: .one)
-tvLG.changeSwitch()
-tvLG.showCurrentChannel()
-tvLG.changeCurrentChannel(to: .six)
+var samsung = TV(brand: "Samsung T-800", switcher: false, currentChannel: .one)
+samsung.changeSwitch()
+samsung.showCurrentChannel()
+samsung.changeCurrentChannel(to: .six)
 
 
 
@@ -79,6 +79,64 @@ tvLG.changeCurrentChannel(to: .six)
        - Показывать цветом или черно-белым (подумайте, какой тип данных лучше всего использовать).
     3) Интегрируйте Настройки в новый класс Телевизор.
     4) Вызовите метод и покажите, что сейчас идет по телевизору, учитывая настройки.*/
+
+
+enum ResolutionTV: String {
+    case r16x9 = "16x9"
+    case r4x3 = "4x3"
+}
+
+class PlasmaTV: TV {
+    private(set) var volume: Int = 0
+    private(set) var resolution: ResolutionTV
+    
+    init(brand: String, switcher: Bool, currentChannel: Channels, volume: Int, resolution: ResolutionTV) {
+        self.volume = volume
+        self.resolution = resolution
+        super.init(brand: brand, switcher: switcher, currentChannel: currentChannel)
+    }
+    
+    // Изменении громкости
+    func changeVolume(louder: Bool) {
+        guard self.switcher else { print("ТВ выключен"); return }
+        if louder {
+            guard (self.volume + 1) <= 10 else { print("Максимальная громкость"); return }
+            self.volume += 1
+            print("Громкость повышена до \(self.volume).")
+        } else {
+            guard (self.volume - 1) >= 0 else { print("Минимальная громкость"); return }
+            self.volume -= 1
+            print("Громкость понижена до \(self.volume).")
+        }
+    }
+    
+    // Изменении разрешения
+    func changeResolution(to newResolution: ResolutionTV) {
+        guard self.switcher else { print("ТВ выключен"); return }
+        self.resolution = newResolution
+        print("Разрешение телевизора изменено на: \(self.resolution.rawValue).")
+    }
+    
+    // Измененный метод переключения канала, с отображением найтроек.
+    override func changeCurrentChannel(to newChannel: Channels) {
+        super.changeCurrentChannel(to: newChannel)
+        printInfoAboutSettings()
+    }
+    
+    // Измененный метод, просмотра текущего канала, с отображением найтроек.
+    override func showCurrentChannel() {
+        super.showCurrentChannel()
+        printInfoAboutSettings()
+    }
+    
+    // Private method
+    func printInfoAboutSettings() {
+        print("Воспроизведение происходит на громкости: \(self.volume) и на разрешении: \(self.resolution.rawValue).")
+    }
+}
+
+var lg = PlasmaTV(brand: "LG", switcher: true, currentChannel: .four, volume: 1, resolution: .r16x9)
+lg.showCurrentChannel()
 
 
 
