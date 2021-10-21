@@ -15,16 +15,16 @@
 
 
 enum Channels: String {
-    case one = "Первый"
-    case two = "Россия 1"
-    case three = "Матч ТВ"
-    case four = "НТВ"
-    case five = "Пятый"
-    case six = "Disney"
+    case channel_1 = "Первый"
+    case channel_2 = "Россия 1"
+    case channel_3 = "Матч ТВ"
+    case channel_4 = "НТВ"
+    case channel_5 = "Пятый"
+    case channel_6 = "Disney"
 }
 
 class TV {
-    let brand: String
+    var brand: String
     private(set) var switcher: Bool
     private(set) var currentChannel: Channels
     
@@ -53,10 +53,10 @@ class TV {
     }
 }
 
-var samsung = TV(brand: "Samsung T-800", switcher: false, currentChannel: .one)
+var samsung = TV(brand: "Samsung T-800", switcher: false, currentChannel: .channel_1)
 samsung.changeSwitch()
 samsung.showCurrentChannel()
-samsung.changeCurrentChannel(to: .six)
+samsung.changeCurrentChannel(to: .channel_4)
 
 
 
@@ -130,12 +130,12 @@ class PlasmaTV: TV {
     }
     
     // Private method
-    func printInfoAboutSettings() {
+    private func printInfoAboutSettings() {
         print("Воспроизведение происходит на громкости: \(self.volume) и на разрешении: \(self.resolution.rawValue).")
     }
 }
 
-var lg = PlasmaTV(brand: "LG", switcher: true, currentChannel: .four, volume: 1, resolution: .r16x9)
+var lg = PlasmaTV(brand: "LG", switcher: true, currentChannel: .channel_4, volume: 1, resolution: .r16x9)
 lg.showCurrentChannel()
 
 
@@ -157,3 +157,68 @@ lg.showCurrentChannel()
     1) Создайте перечисление со связанными значениями с двумя кейсами: телеканал и подключение по входящему видео порту;
     2) Интегрируйте эту опцию в Телевизор.
     3) Вызовите метод и покажите, что сейчас по телевизору. */
+
+
+enum VideoPort {
+    case live
+    case record
+}
+
+class VideoTV: PlasmaTV {
+    private(set) var selectedPort: VideoPort
+    private(set) var availabilityPort: Bool
+    
+    init(brand: String, switcher: Bool, currentChannel: Channels, volume: Int, resolution: ResolutionTV, availabilityPort: Bool) {
+        self.availabilityPort = availabilityPort
+        availabilityPort ? (self.selectedPort = .record) : (self.selectedPort = .live)
+        super.init(brand: brand, switcher: switcher, currentChannel: currentChannel, volume: volume, resolution: resolution)
+    }
+    
+    // Смена режима
+    func changePort() {
+        guard self.switcher else { print("ТВ выключен"); return }
+        guard self.availabilityPort else { print("В вашем телевизоре отсутсвует режим приставки"); return }
+        
+        if self.selectedPort == .live {
+            self.selectedPort = .record
+            print("Режим сменен на видеомагнетофон.\nКанал \(currentChannel.rawValue) воспроизводиться в записи.")
+        } else {
+            self.selectedPort = .live
+            print("Режим сменен на live-режим.\nКанал \(currentChannel.rawValue) воспроизводиться в прямом эфире.")
+        }
+    }
+    
+    // Измененный метод переключения канала, с отображением режима в котором воспроизводиться канал.
+    override func changeCurrentChannel(to newChannel: Channels) {
+        super.changeCurrentChannel(to: newChannel)
+        informationAboutPort()
+    }
+    
+    // Измененный метод, просмотра текущего канала, с отображением режима в котором воспроизводиться канал.
+    override func showCurrentChannel() {
+        super.showCurrentChannel()
+        informationAboutPort()
+    }
+    
+    // Private method's - Отображение режима(порта), в котором воспроизводиться канал.
+    private func informationAboutPort() {
+        if selectedPort == .live {
+            print("Канал \(currentChannel.rawValue) воспроизводиться в прямом эфире.\n")
+        } else {
+            print("Канал \(currentChannel.rawValue) воспроизводиться в записи.")
+        }
+    }
+}
+
+var appleTV = VideoTV(brand: "Apple TV", switcher: true, currentChannel: .channel_5, volume: 2, resolution: .r16x9, availabilityPort: true)
+appleTV.changePort()
+appleTV.changePort()
+
+print("\n")
+appleTV.changeCurrentChannel(to: .channel_2)
+
+print("\n")
+appleTV.changePort()
+
+print("\n")
+appleTV.showCurrentChannel()
