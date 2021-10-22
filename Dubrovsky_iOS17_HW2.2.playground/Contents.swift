@@ -1,4 +1,6 @@
-import Foundation
+//import Foundation
+
+import Darwin
 
 
 //  MARK: - Задача #1.
@@ -12,22 +14,80 @@ import Foundation
 
 
 class Track {
-    private let artist: String
-    private let nameSong: String
-    private let country: String
-    private let duration: String
-    var fullDescriptionSong: String { "Artist: \(artist), Name: \(nameSong), Country: \(country), Duration: \(duration)." }
+    let artist: String
+    let titleSong: String
+    let country: String
+    let duration: Double
+    var fullDescriptionSong: String { "- Title: '\(titleSong)', artist: '\(artist)', country: '\(country)', duration: '\(duration)'." }
     
-    init(artist: String, nameSong: String, country: String, duration: String) {
+    init(artist: String, nameSong: String, country: String, duration: Double) {
         self.artist = artist
-        self.nameSong = nameSong
+        self.titleSong = nameSong
         self.country = country
         self.duration = duration
     }
 }
 
-var one = Track(artist: "A", nameSong: "B", country: "C", duration: "D")
-print(one.fullDescriptionSong)
+class Category {
+    private(set) var nameCategory: String
+    private(set) lazy var countTrack: UInt = UInt(trackList.count)
+    private(set) var trackList: [String: [String]] { willSet { self.countTrack = UInt(newValue.count) }}
+    var fullDescriptionCategory: String { "\nDescription Category: name: '\(nameCategory)', countTracks: '\(countTrack)', track(s): \(informationAboutAllTracks())" }
+    
+    init(nameCategory: String) {
+        self.nameCategory = nameCategory
+        self.trackList = Dictionary<String, [String]>()
+    }
+    
+    func adding(song: Track) {
+        guard trackList[song.titleSong] == nil else { print("\nThe song '\(song.titleSong)' already exists."); return }
+        trackList[song.titleSong] = [song.artist, song.country, String(song.duration)]
+        print("\nAdded a new song: \(song.fullDescriptionSong)")
+    }
+    
+    func removingSongBy(name: String) {
+        guard trackList[name] != nil else { print("\nThere is no such song '\(name)' in the category."); return }
+        trackList.removeValue(forKey: name)
+    }
+    
+    // Private method's
+    private func informationAboutAllTracks() -> String {
+        guard !trackList.isEmpty else {return "empty."}
+        var info: String = ""
+        trackList.forEach{ info += "\n- Title: \($0.key), artist: \($0.value[0]), country: \($0.value[1]), duration: \($0.value[1])." }
+        return info
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -95,39 +155,39 @@ print(one.fullDescriptionSong)
 
 
 
-class Tracker {
-    private var timer: Timer?
-    var interval: TimeInterval? {
-        willSet {
-            if let _ = interval { print("Timer will be started with interval: \(interval).") }
-            guard let _ = timer else { return }
-            print("Timer stopped.")
-            timer?.invalidate()
-            timer = nil
-        }
-        didSet {
-            if let _ = oldValue {
-                print("Old interval was: \(oldValue).")
-            } else {
-                print("No interval beforeL: \(oldValue).")
-            }
-            
-            guard let newInterval = interval else { return }
-            timer = Timer.scheduledTimer(withTimeInterval: newInterval,
-                                         repeats: true,
-                                         block: { _ in print("Do  will be started with interval: \(newInterval).")} )
-        }
-    }
-}
-
-
-let tracker = Tracker()
-tracker.interval = 3
-tracker.interval = 4
-
-DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-    tracker.interval = 2
-}
+//class Tracker {
+//    private var timer: Timer?
+//    var interval: TimeInterval? {
+//        willSet {
+//            if let _ = interval { print("Timer will be started with interval: \(interval).") }
+//            guard let _ = timer else { return }
+//            print("Timer stopped.")
+//            timer?.invalidate()
+//            timer = nil
+//        }
+//        didSet {
+//            if let _ = oldValue {
+//                print("Old interval was: \(oldValue).")
+//            } else {
+//                print("No interval beforeL: \(oldValue).")
+//            }
+//
+//            guard let newInterval = interval else { return }
+//            timer = Timer.scheduledTimer(withTimeInterval: newInterval,
+//                                         repeats: true,
+//                                         block: { _ in print("Do  will be started with interval: \(newInterval).")} )
+//        }
+//    }
+//}
+//
+//
+//let tracker = Tracker()
+//tracker.interval = 3
+//tracker.interval = 4
+//
+//DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+//    tracker.interval = 2
+//}
 
 
 
