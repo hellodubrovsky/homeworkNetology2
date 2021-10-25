@@ -87,9 +87,17 @@ class MessagesSession: MessageSessionProtocol {
 
 
 class Messages {
-    func sendMessage(input: String) {}
-    func sendMessage(input: Double) {}
-    func sendMessage(input: Int) {}
+    func sendMessage() -> Double {
+        return 3.14
+    }
+    
+    func sendMessage(input: String) -> String {
+        return "Message String: \(input)"
+    }
+    
+    func sendMessage(input: Int) -> String {
+        return "Message Integer: \(input)"
+    }
 }
 
 
