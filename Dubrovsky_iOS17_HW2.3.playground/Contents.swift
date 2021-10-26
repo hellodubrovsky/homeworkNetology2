@@ -35,12 +35,13 @@ let secondMathematicalCalculation = { (satelliteWeight: Double, flightLength: Do
     return satelliteWeight * flightLength / 40
 }
 
+print("ЗАДАЧА #1.")
 flightToEurope_1(closure: firstMathematicalCalculation)
 flightToEurope_1(closure: secondMathematicalCalculation)
-
+print("------------------------------------------------")
 flightToEurope_2(satelliteWeight: 200, flightLength: 30_000, closure: firstMathematicalCalculation)
 flightToEurope_2(satelliteWeight: 200, flightLength: 30_000, closure: secondMathematicalCalculation)
-
+print("------------------------------------------------\n")
 
 
  
@@ -53,6 +54,15 @@ flightToEurope_2(satelliteWeight: 200, flightLength: 30_000, closure: secondMath
 
     Алгоритм выполнения:
     1) Представить задание 1 в сокращенном виде (см. пункт лекции "Сокращения для замыканий").*/
+
+
+
+print("ЗАДАЧА #2.")
+flightToEurope_1() { $0 / $1 * 100}
+flightToEurope_1() { $0 * $1 / 40}
+print("------------------------------------------------")
+flightToEurope_2(satelliteWeight: 200, flightLength: 30_000) { $0 / $1 * 100}
+flightToEurope_2(satelliteWeight: 200, flightLength: 30_000) { $0 / $1 * 100}
 
 
 
