@@ -14,8 +14,35 @@ import Foundation
     2) Написать два замыкания (тип указан выше). Внутри должна быть математическая операция (на ваш выбор) над входящими значениями.
     3) Вызвать функцию для первого замыкания и потом для второго замыкания.
     4) Выполнить задание, не сокращая синтаксис языка.*/
+
+
+
+// Не совсем понял задание, поэтому сделал 2 функции, 1-ая с одним входящим параметром - замыкание.
+func flightToEurope_1(closure: (Double, Double) -> Double) {
+    print("[F1] По данной формуле, топлива для достижения Европы необходимо: \(closure(200, 30_000)) л.")
+}
+
+// 2-ая функция, добавляет к входным параметрам вес и длина полета.
+func flightToEurope_2(satelliteWeight: Double, flightLength: Double, closure: (Double, Double) -> Double) {
+    print("[F2] По данной формуле, топлива для достижения Европы необходимо: \(closure(satelliteWeight, flightLength)) л.")
+}
  
- 
+let firstMathematicalCalculation = { (satelliteWeight: Double, flightLength: Double) -> Double in
+    return flightLength / satelliteWeight * 100
+}
+
+let secondMathematicalCalculation = { (satelliteWeight: Double, flightLength: Double) -> Double in
+    return satelliteWeight * flightLength / 40
+}
+
+flightToEurope_1(closure: firstMathematicalCalculation)
+flightToEurope_1(closure: secondMathematicalCalculation)
+
+flightToEurope_2(satelliteWeight: 200, flightLength: 30_000, closure: firstMathematicalCalculation)
+flightToEurope_2(satelliteWeight: 200, flightLength: 30_000, closure: secondMathematicalCalculation)
+
+
+
  
  
  
