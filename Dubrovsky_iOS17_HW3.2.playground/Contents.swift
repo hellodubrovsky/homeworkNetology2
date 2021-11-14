@@ -1,76 +1,453 @@
 import UIKit
 import Foundation
 
-/*  MARK: Задача 1 (основная)
-    ВЫ - главный архитектор в команде разработчиков. Ваша задача - разработать программное обеспечение (ПО) для дилерских центров по продаже автомобилей.
-    Ваша цель - создать гибкое ПО. Что это значит? Ваше ПО должно подходить для любой марки авто, должно быть расширяемым и масштабируемым в дальнейшем, чтобы ваша компания могла выпускать обновления.
-    Задача разделена на 4 части, в каждой из них нужно самостоятельно подумать, какой тип данных передать каждому свойству для комфортной работы, а также по необходимости добавить вспомогательные методы.
+/* https://github.com/netology-code/aios-homeworks/blob/master/3.2_homework.md */
 
-    MARK: Часть 1.
-    Для начала нужно описать машину минимальным набором параметров, используя протокол.
-    Алгоритм выполнения:
-    1) Создайте протокол 'Car'
-    2) Добавьте в него свойства:
-    3) 'model' (только для чтения): марка
-    4) 'color' (только для чтения): цвет
-    5) 'buildDate' (только для чтения): дата выпуска
-    6) 'price' (чтение и запись): цена авто
-    7) 'accessories' (чтение и запись): дополнительное оборудование (тонировка, сингнализация, спортивные диски)
-    8) 'isServiced' (чтение и запись): сделана ли предпродажная подготовка. Обычно ее делают в дилерских центрах перед постановкой машины в салон. */
+
+// MARK: - ЧАСТЬ #1.
+
+enum AccessoriesCar: String, CaseIterable {
+    case tuning
+    case tinting
+    case alarmSystem
+    case sportsWheels
+    case sunroofInCeiling
+    case leatherInterior
+    case firstAidKit
+    case fireExtinguisher
+}
 
 protocol Car {
     var model: String { get }
     var color: UIColor { get }
-    var buildDate: String { get }
+    var buildDate: Date { get }
     var price: Double { get set }
     var accessories: [AccessoriesCar] { get set }
     var isServiced: Bool { get set }
 }
 
-enum AccessoriesCar: String {
-    case tinting = "Тонировка"
-    case alarmSystem = "Сигнализация"
-    case sportsWheels = "Спортивные диски"
-    case chipTuning = "Чип-тюнинг"
-    case exhaust = "Спортивный выхлоп"
-    case panoramicRoof = "Панарамная крыша"
-}
 
 
 
+// MARK: - ЧАСТЬ #2.
 
-
-/*  MARK: Часть 2.
-    По аналогии с протоколом 'Car', нужно описать дилерский центр минимальным набором свойств и методов, используя протокол.
-
-    Алгоритм выполнения:
-    1) Создайте протокол 'Dealership'
-    2) Добавьте свойства:
-        a) 'name' (только для чтения): название дилерского центра (назвать по марке машины для упрощения)
-        b) 'showroomCapacity' (только для чтения): максимальная вместимость автосалона по количеству машин.
-        c) 'stockCars' (массив, чтение и запись): машины, находящиеся на парковке склада. Представим, что парковка не имеет лимита по количеству машин.
-        d) 'showroomCars' (массив, чтение и запись): машины, находящиеся в автосалоне.
-        e) 'cars' (массив, чтение и запись): хранит список всех машин в наличии.
-    3) Добавьте методы:
-        a) 'offerAccesories(_ :)': принимает массив акксесуаров в качестве параметра. Метод предлагает клиенту купить доп. оборудование.
-        b) 'presaleService(_ :)': принимает машину в качестве параметра. Метод отправляет машину на предпродажную подготовку.
-        c) 'addToShowroom(_ :)': также принимает машину в качестве параметра. Метод перегоняет машину с парковки склада в автосалон, при этом выполняет предпродажную подготовку.
-        d) 'sellCar(_ :)': также принимает машину в качестве параметра. Метод продает машину из автосалона при этом проверяет, выполнена ли предпродажная подготовка.
-            Также, если у машины отсутсвует доп. оборудование, нужно предложить клиенту его купить. (давайте представим, что клиент всегда соглашается и покупает :) )
-        e) 'orderCar()': не принимает и не возвращает параметры. Метод делает заказ новой машины с завода, т.е. добавляет машину на парковку склада.
-    
-    Обратите внимание! Каждый метод должен выводить в консоль информацию о машине и выполненном действии с ней.*/
-
-protocol Dealership {
+protocol DealershipProtocol {
     var name: String { get }
-    var showroomCapacity: UInt { get }
+    var showroomCapacite: UInt { get }
     var stockCars: [Car] { get set }
     var showroomCars: [Car] { get set }
     var cars: [Car] { get set }
     
     func offerAccesories(_: [AccessoriesCar])
-    func presaleService(_: Car)
-    func addToShowroom(_: Car)
-    func sellCar(_: Car)
+    func presaleService(_: inout Car)
+    func addToShowroom(_: inout Car)
+    func sellCar(_: inout Car)
     func orderCar()
 }
+
+
+// MARK: - ЧАСТЬ #3.
+
+// MARK: BMW
+
+struct CarBMW: Car {
+    var model: String
+    var color: UIColor
+    var buildDate: Date
+    var price: Double
+    var accessories: [AccessoriesCar]
+    var isServiced: Bool
+    var description: String { "Model: '\(self.model)'.Color: '\(self.color)'.isServiced: \(isServiced ? "имеется" : "отсутсвует")."}
+    
+    init(model: String, color: UIColor, price: Double, accessories: [AccessoriesCar], isServiced: Bool) {
+        self.model = model
+        self.color = color
+        self.buildDate = Calendar.current.date(byAdding: .year, value: -1, to: Date())!
+        self.price = price
+        self.accessories = accessories
+        self.isServiced = isServiced
+    }
+}
+
+class DealershipBMW: DealershipProtocol {
+    var name: String
+    var showroomCapacite: UInt
+    var stockCars: [Car]
+    var showroomCars: [Car] = []
+    var cars: [Car] = []
+    var description: String { "Название салона: '\(self.name)'.\nВестимость машин: \(self.showroomCapacite).\nМашин на парковке: \(self.stockCars.count).\nМашин в салоне: \(self.showroomCars.count).\nВсего машин: \(self.cars.count).\n" }
+    
+    init(showroomCapacite: UInt, stockCars: [Car]) {
+        self.name = "BMW"
+        self.showroomCapacite = showroomCapacite
+        self.stockCars = stockCars
+        self.showroomCars = []
+        self.cars = stockCars
+    }
+    
+    // Метод предлагает клиенту купить доп. оборудование.
+    func offerAccesories(_ accessoriesArray: [AccessoriesCar]) {
+        guard !accessoriesArray.isEmpty else { return }
+        print("Можно приобрести дополнительное оборудование:")
+        accessoriesArray.forEach{ print($0.rawValue) }
+        print("\n")
+    }
+    
+    // Метод отправляет машину на предпродажную подготовку.
+    func presaleService(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        guard !car.isServiced else { return }
+        print("Выполняется предпродажная подготовка для \(car.model).")
+        car.isServiced = true
+        sleep(2); print("Предпродажная подготовка выполнена.\n")
+    }
+    
+    // Метод перегоняет машину с парковки склада в автосалон, при этом выполняет предпродажную подготовку.
+    func addToShowroom(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        presaleService(&car)
+        stockCars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        showroomCars.append(car)
+    }
+    
+    // Метод продает машину из автосалона при этом проверяет, выполнена ли предпродажная подготовка.
+    func sellCar(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        guard car.isServiced else { print("Предпродажная подготовка не выполнена.\n"); return }
+        guard showroomCars.contains(where: { return comparisonOfCars(lhs: $0, rhs: car) }) else { print("Данной машины: '\(car.model)' нет на парковке.\n"); return }
+        
+        if car.accessories.isEmpty {
+            for accessory in AccessoriesCar.allCases {
+                //print("Добавлен новый акссесуар: \(accessory.rawValue).")
+                car.accessories.append(accessory)
+            }
+        }
+        showroomCars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        cars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        print("Машина '\(car.model)' продана.\n")
+    }
+    
+    // Метод делает заказ новой машины с завода, т.е. добавляет машину на парковку склада.
+    func orderCar() {
+        let newCar = CarBMW(model: "BMW X5", color: .blue, price: 20, accessories: [.leatherInterior], isServiced: false)
+        stockCars.append(newCar)
+        cars.append(newCar)
+    }
+    
+    // Private method's
+    private func isThereDealership(car: Car) -> Bool {
+        cars.contains(where: { return comparisonOfCars(lhs: $0, rhs: car) })
+    }
+    
+    private func comparisonOfCars(lhs: Car, rhs: Car) -> Bool {
+        lhs.model == rhs.model &&
+        lhs.color == rhs.color &&
+        lhs.buildDate == rhs.buildDate &&
+        lhs.price == rhs.price
+    }
+}
+
+// MARK: Mercedes
+
+struct CarMercedes: Car {
+    var model: String
+    var color: UIColor
+    var buildDate: Date
+    var price: Double
+    var accessories: [AccessoriesCar]
+    var isServiced: Bool
+    var description: String { "Model: '\(self.model)'.Color: '\(self.color)'.isServiced: \(isServiced ? "имеется" : "отсутсвует")."}
+    
+    init(model: String, color: UIColor, price: Double, accessories: [AccessoriesCar], isServiced: Bool) {
+        self.model = model
+        self.color = color
+        self.buildDate = Date()
+        self.price = price
+        self.accessories = accessories
+        self.isServiced = isServiced
+    }
+}
+
+class DealershipMercedes: DealershipProtocol {
+    var name: String
+    var showroomCapacite: UInt
+    var stockCars: [Car]
+    var showroomCars: [Car] = []
+    var cars: [Car] = []
+    var description: String { "Название салона: '\(self.name)'.\nВестимость машин: \(self.showroomCapacite).\nМашин на парковке: \(self.stockCars.count).\nМашин в салоне: \(self.showroomCars.count).\nВсего машин: \(self.cars.count).\n" }
+    
+    init(showroomCapacite: UInt, stockCars: [Car]) {
+        self.name = "Mercedes"
+        self.showroomCapacite = showroomCapacite
+        self.stockCars = stockCars
+        self.showroomCars = []
+        self.cars = stockCars
+    }
+    
+    // Метод предлагает клиенту купить доп. оборудование.
+    func offerAccesories(_ accessoriesArray: [AccessoriesCar]) {
+        guard !accessoriesArray.isEmpty else { return }
+        print("Можно приобрести дополнительное оборудование:")
+        accessoriesArray.forEach{ print($0.rawValue) }
+        print("\n")
+    }
+    
+    // Метод отправляет машину на предпродажную подготовку.
+    func presaleService(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        guard !car.isServiced else { return }
+        print("Выполняется предпродажная подготовка для \(car.model).")
+        car.isServiced = true
+        sleep(2); print("Предпродажная подготовка выполнена.\n")
+    }
+    
+    // Метод перегоняет машину с парковки склада в автосалон, при этом выполняет предпродажную подготовку.
+    func addToShowroom(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        presaleService(&car)
+        stockCars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        showroomCars.append(car)
+    }
+    
+    // Метод продает машину из автосалона при этом проверяет, выполнена ли предпродажная подготовка.
+    func sellCar(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        guard car.isServiced else { print("Предпродажная подготовка не выполнена.\n"); return }
+        guard showroomCars.contains(where: { return comparisonOfCars(lhs: $0, rhs: car) }) else { print("Данной машины: '\(car.model)' нет на парковке.\n"); return }
+        
+        if car.accessories.isEmpty {
+            for accessory in AccessoriesCar.allCases {
+                //print("Добавлен новый акссесуар: \(accessory.rawValue).")
+                car.accessories.append(accessory)
+            }
+        }
+        showroomCars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        cars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        print("Машина '\(car.model)' продана.\n")
+    }
+    
+    // Метод делает заказ новой машины с завода, т.е. добавляет машину на парковку склада.
+    func orderCar() {
+        let newCar = CarMercedes(model: "Merccedes A", color: .blue, price: 20, accessories: [.leatherInterior], isServiced: false)
+        stockCars.append(newCar)
+        cars.append(newCar)
+    }
+    
+    // Private method's
+    private func isThereDealership(car: Car) -> Bool {
+        cars.contains(where: { return comparisonOfCars(lhs: $0, rhs: car) })
+    }
+    
+    private func comparisonOfCars(lhs: Car, rhs: Car) -> Bool {
+        lhs.model == rhs.model &&
+        lhs.color == rhs.color &&
+        lhs.buildDate == rhs.buildDate &&
+        lhs.price == rhs.price
+    }
+}
+
+// MARK: Tesla
+
+struct CarTesla: Car {
+    var model: String
+    var color: UIColor
+    var buildDate: Date
+    var price: Double
+    var accessories: [AccessoriesCar]
+    var isServiced: Bool
+    var description: String { "Model: '\(self.model)'.Color: '\(self.color)'.isServiced: \(isServiced ? "имеется" : "отсутсвует")."}
+    
+    init(model: String, color: UIColor, price: Double, accessories: [AccessoriesCar], isServiced: Bool) {
+        self.model = model
+        self.color = color
+        self.buildDate = Date()
+        self.price = price
+        self.accessories = accessories
+        self.isServiced = isServiced
+    }
+}
+
+class DealershipTesla: DealershipProtocol {
+    var name: String
+    var showroomCapacite: UInt
+    var stockCars: [Car]
+    var showroomCars: [Car] = []
+    var cars: [Car] = []
+    var description: String { "Название салона: '\(self.name)'.\nВестимость машин: \(self.showroomCapacite).\nМашин на парковке: \(self.stockCars.count).\nМашин в салоне: \(self.showroomCars.count).\nВсего машин: \(self.cars.count).\n" }
+    
+    init(showroomCapacite: UInt, stockCars: [Car]) {
+        self.name = "Tesla"
+        self.showroomCapacite = showroomCapacite
+        self.stockCars = stockCars
+        self.showroomCars = []
+        self.cars = stockCars
+    }
+    
+    // Метод предлагает клиенту купить доп. оборудование.
+    func offerAccesories(_ accessoriesArray: [AccessoriesCar]) {
+        guard !accessoriesArray.isEmpty else { return }
+        print("Можно приобрести дополнительное оборудование:")
+        accessoriesArray.forEach{ print($0.rawValue) }
+        print("\n")
+    }
+    
+    // Метод отправляет машину на предпродажную подготовку.
+    func presaleService(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        guard !car.isServiced else { return }
+        print("Выполняется предпродажная подготовка для \(car.model).")
+        car.isServiced = true
+        sleep(2); print("Предпродажная подготовка выполнена.\n")
+    }
+    
+    // Метод перегоняет машину с парковки склада в автосалон, при этом выполняет предпродажную подготовку.
+    func addToShowroom(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        presaleService(&car)
+        stockCars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        showroomCars.append(car)
+    }
+    
+    // Метод продает машину из автосалона при этом проверяет, выполнена ли предпродажная подготовка.
+    func sellCar(_ car: inout Car) {
+        guard isThereDealership(car: car) else { print("Данной машины: '\(car.model)' нет в указанном салоне.\n"); return }
+        guard car.isServiced else { print("Предпродажная подготовка не выполнена.\n"); return }
+        guard showroomCars.contains(where: { return comparisonOfCars(lhs: $0, rhs: car) }) else { print("Данной машины: '\(car.model)' нет на парковке.\n"); return }
+        
+        if car.accessories.isEmpty {
+            for accessory in AccessoriesCar.allCases {
+                //print("Добавлен новый акссесуар: \(accessory.rawValue).")
+                car.accessories.append(accessory)
+            }
+        }
+        showroomCars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        cars.removeAll(where: { return comparisonOfCars(lhs: $0, rhs: car) } )
+        print("Машина '\(car.model)' продана.\n")
+    }
+    
+    // Метод делает заказ новой машины с завода, т.е. добавляет машину на парковку склада.
+    func orderCar() {
+        let newCar = CarTesla(model: "Tesla Model 3", color: .blue, price: 20, accessories: [.leatherInterior], isServiced: false)
+        stockCars.append(newCar)
+        cars.append(newCar)
+    }
+    
+    // Private method's
+    private func isThereDealership(car: Car) -> Bool {
+        cars.contains(where: { return comparisonOfCars(lhs: $0, rhs: car) })
+    }
+    
+    private func comparisonOfCars(lhs: Car, rhs: Car) -> Bool {
+        lhs.model == rhs.model &&
+        lhs.color == rhs.color &&
+        lhs.buildDate == rhs.buildDate &&
+        lhs.price == rhs.price
+    }
+}
+
+
+
+
+
+
+// MARK: - ЧАСТЬ #4.
+
+protocol SpecialOffer {
+    func addEmergencyPack(car: inout Car)               // Метод добавляет аптечку и огнетушитель к доп. оборудованию машины.
+    func makeSpecialOffer(car: inout Car)       // Метод проверяет дату выпуска авто, если год выпуска машины меньше текущего, нужно сделать скидку 15%, а также добавить аптеку и огнетушитель.
+}
+
+extension DealershipBMW: SpecialOffer {
+    func addEmergencyPack(car: inout Car) {
+        car.accessories.append(.firstAidKit)
+        car.accessories.append(.sunroofInCeiling)
+    }
+    
+    func makeSpecialOffer( car: inout Car) {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let carBuildYear = Calendar.current.component(.year, from: car.buildDate)
+        guard carBuildYear < currentYear else { return }
+        car.price *= 0.85
+        addEmergencyPack(car: &car)
+    }
+}
+
+extension DealershipMercedes: SpecialOffer {
+    func addEmergencyPack(car: inout Car) {
+        car.accessories.append(.firstAidKit)
+        car.accessories.append(.sunroofInCeiling)
+    }
+    
+    func makeSpecialOffer( car: inout Car) {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let carBuildYear = Calendar.current.component(.year, from: car.buildDate)
+        guard carBuildYear < currentYear else { return }
+        car.price *= 0.85
+        addEmergencyPack(car: &car)
+    }
+}
+
+extension DealershipTesla: SpecialOffer {
+    func addEmergencyPack(car: inout Car) {
+        car.accessories.append(.firstAidKit)
+        car.accessories.append(.sunroofInCeiling)
+    }
+    
+    func makeSpecialOffer( car: inout Car) {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let carBuildYear = Calendar.current.component(.year, from: car.buildDate)
+        guard carBuildYear < currentYear else { return }
+        car.price *= 0.85
+        addEmergencyPack(car: &car)
+    }
+}
+
+
+// MARK: - ПРОВЕРКИ.
+
+/*  Создайте массив, положите в него созданные дилерские центры.
+    Пройдитесь по нему циклом и выведите в консоль слоган для каждого дилеского центра (слоган можно загуглить).*/
+
+var bmwFirst: Car = CarBMW(model: "BMW X5", color: .black, price: 50, accessories: [], isServiced: false)
+var bmwSecond: Car = CarBMW(model: "BMW X6", color: .white, price: 60, accessories: [], isServiced: true)
+var bmwThird: Car = CarBMW(model: "BMW X7", color: .red, price: 100, accessories: [.sportsWheels, .tinting], isServiced: false)
+
+var delBMW = DealershipBMW(showroomCapacite: 8, stockCars: [ bmwFirst, bmwSecond, bmwThird ])
+var delMercedes = DealershipMercedes(showroomCapacite: 10, stockCars: [])
+var delTesla = DealershipTesla(showroomCapacite: 15, stockCars: [])
+
+
+func brandSlogan(dealership: String) {
+    switch dealership {
+    case "BMW":
+        print("BMW: С удовольствием за рулем")
+    case "Mercedes":
+        print("Mecedes: Лучшее или ничего")
+    case "Tesla":
+        print("Tesla: Жги резину, а не бензин")
+    default:
+        print("Для \(dealership) слоган не найден")
+    }
+}
+var dealerships: [DealershipProtocol] = [delBMW, delMercedes, delTesla]
+dealerships.forEach{ brandSlogan(dealership: $0.name) }
+
+
+print(delBMW.description)
+delBMW.offerAccesories([.tinting, .sportsWheels, .alarmSystem])
+bmwFirst.isServiced
+delBMW.presaleService(&bmwThird)
+delBMW.presaleService(&bmwFirst)
+bmwFirst.isServiced
+delBMW.addToShowroom(&bmwFirst)
+delBMW.sellCar(&bmwFirst)
+delBMW.orderCar()
+delBMW.orderCar()
+delBMW.orderCar()
+print(delBMW.description)
+
+bmwThird.price
+bmwThird.accessories
+delBMW.makeSpecialOffer(car: &bmwThird)
+bmwThird.price
+bmwThird.accessories
